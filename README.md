@@ -2,6 +2,4 @@
 
 ## folder directory
 
-├── templates : html
-├──  static : CSS, JS
 
