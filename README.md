@@ -2,6 +2,6 @@
 
 ## folder directory
 
-|_ templates : html
-|_ static : CSS, JS
+├── templates : html
+├──  static : CSS, JS
 
