@@ -223,12 +223,13 @@ def convert_ios_df_to_json(ios_df: pd.DataFrame, variables: List[str], output_fi
 
 
 # 사용 예시
-zip_file_path = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.zip"  # 압축 파일 경로 (실제 경로로 변경)
-extract_folder = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\export_ios_data"  # 압축 해제할 폴더명
-start_date = "2025-01-18"
-end_date = "2025-01-21"
-research_name="My_Research",
-participant_id="P12345"
-variables=["StepCount"]
-ios_df = ios_read_zip(zip_file_path, extract_folder, start_date, end_date, research_name, participant_id) # zip 압축해제 및 파일 읽기
-json_output = convert_ios_df_to_json(ios_df, variables, output_file=r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.json") # JSON 변환 및 파일 저장
+# zip_file_path = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.zip"  # 압축 파일 경로 (실제 경로로 변경)
+# extract_folder = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\export_ios_data"  # 압축 해제할 폴더명
+# start_date = "2025-01-18"
+# end_date = "2025-01-21"
+# research_name="My_Research",
+# participant_id="P12345"
+# variables=["StepCount"]
+
+# ios_df = ios_read_zip(zip_file_path, extract_folder, start_date, end_date, research_name, participant_id) # zip 압축해제 및 파일 읽기
+# json_output = convert_ios_df_to_json(ios_df, variables, output_file=r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.json") # JSON 변환 및 파일 저장
