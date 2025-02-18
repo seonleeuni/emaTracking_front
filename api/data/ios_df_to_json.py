@@ -5,6 +5,7 @@ import xml.etree.ElementTree as ET
 from datetime import datetime
 import json
 from typing import List
+import re
 
 def extract_zip_file(zip_path: str, extract_to: str) -> tuple:
     """ZIP 파일을 UTF-8로 디코딩하여 압축 해제하고, .xml 파일 목록과 GPX 폴더 경로를 반환
@@ -70,6 +71,7 @@ def process_gpx_files(gpx_folder_path: str, start_date: datetime, end_date: date
     """
 
     if gpx_folder_path is None:
+        print("⚠️ GPX 폴더가 존재하지 않습니다.")
         return pd.DataFrame()  # GPX 데이터가 없는 경우 빈 데이터프레임 반환
 
     all_points = []
@@ -80,12 +82,14 @@ def process_gpx_files(gpx_folder_path: str, start_date: datetime, end_date: date
     # 📌 파일명을 기준으로 날짜 필터링
     for gpx_file in gpx_files:
         try:
-            # 파일명에서 날짜 추출 (예: 'route_2022-04-07_6.19pm.gpx' → '2022-04-07')
-            file_date_str = gpx_file.split('_')[1]  # 두 번째 요소가 날짜
-            file_date = datetime.strptime(file_date_str, "%Y-%m-%d")
-        except (IndexError, ValueError):
-            print(f"⚠️ 날짜 형식을 추출할 수 없는 GPX 파일: {gpx_file}")
-            continue
+            # 파일명에서 날짜 추출 (정규식 활용)
+            match = re.search(r'_(\d{4}-\d{2}-\d{2})_', gpx_file)
+            if match:
+                file_date_str = match.group(1)
+                file_date = datetime.strptime(file_date_str, "%Y-%m-%d")
+            else:
+                print(f"⚠️ 날짜를 찾을 수 없는 GPX 파일: {gpx_file}")
+                continue
 
             # 날짜가 지정한 범위 내에 있는 경우만 처리
             if start_date <= file_date <= end_date:
@@ -95,16 +99,18 @@ def process_gpx_files(gpx_folder_path: str, start_date: datetime, end_date: date
                 # .gpx 파일 파싱
                 tree = ET.parse(gpx_path)
                 root = tree.getroot()
-                ns = {"gpx": "http://www.topografix.com/GPX/1/1"}  # GPX 네임스페이스 정의
+
+                # GPX 네임스페이스 자동 감지
+                ns = {"gpx": root.tag.split('}')[0].strip('{')} if '}' in root.tag else {"gpx": "http://www.topografix.com/GPX/1/1"}
 
                 # GPX 데이터 읽기
                 for trk in root.findall("gpx:trk", ns):
                     for trkseg in trk.findall("gpx:trkseg", ns):
                         for trkpt in trkseg.findall("gpx:trkpt", ns):
-                            lat = trkpt.attrib.get("lat")
-                            lon = trkpt.attrib.get("lon")
-                            ele = trkpt.find("gpx:ele", ns)
-                            time = trkpt.find("gpx:time", ns)
+                            lat = trkpt.attrib.get("lat")  # 위도
+                            lon = trkpt.attrib.get("lon")  # 경도
+                            ele = trkpt.find("gpx:ele", ns)  # 고도
+                            time = trkpt.find("gpx:time", ns)  # 시간
 
                             if time is not None:
                                 time_parsed = datetime.strptime(time.text, "%Y-%m-%dT%H:%M:%SZ")
@@ -123,6 +129,10 @@ def process_gpx_files(gpx_folder_path: str, start_date: datetime, end_date: date
 
     # 📌 모든 데이터를 하나의 데이터프레임으로 변환
     ios_gps_df = pd.DataFrame(all_points)
+
+    # 📌 GPX 데이터가 비어 있을 경우 경고 메시지 출력
+    if ios_gps_df.empty:
+        print("⚠️ GPX 데이터를 찾을 수 없습니다.")
 
     return ios_gps_df
 
@@ -151,7 +161,7 @@ def merge_health_and_gps(ios_health_df: pd.DataFrame, ios_gps_df: pd.DataFrame, 
         ios_gps_df["value"] = ios_gps_df.apply(
             lambda row: f"({row['Latitude']}, {row['Longitude']}, {row['Elevation']})", axis=1
         )
-        ios_gps_df["column"] = "latitude, longitude, elevation"
+        ios_gps_df["column"] = "GPS"
         ios_gps_df = ios_gps_df[["research_name", "pID", "timeStamp", "value", "column"]]
     else:
         ios_gps_df = pd.DataFrame(columns=["research_name", "pID", "timeStamp", "value", "column"])
@@ -196,7 +206,7 @@ def convert_ios_df_to_json(ios_df: pd.DataFrame, variables: List[str], output_fi
 
     Args:
         ios_df (pd.DataFrame): 변환할 iOS 데이터프레임
-        variables (List[str]): 특정 'column' 값들의 리스트 (예: ["Heart Rate", "Steps", "latitude, longitude, elevation"])
+        variables (List[str]): 특정 'column' 값들의 리스트 (예: ["Heart Rate", "Steps", "GPS"])
         output_file (str, optional): JSON 파일로 저장할 경우 지정할 파일 경로 (예: 'output.json')
 
     Returns:
@@ -223,13 +233,12 @@ def convert_ios_df_to_json(ios_df: pd.DataFrame, variables: List[str], output_fi
 
 
 # 사용 예시
-# zip_file_path = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.zip"  # 압축 파일 경로 (실제 경로로 변경)
-# extract_folder = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\export_ios_data"  # 압축 해제할 폴더명
-# start_date = "2025-01-18"
-# end_date = "2025-01-21"
-# research_name="My_Research",
-# participant_id="P12345"
-# variables=["StepCount"]
-
-# ios_df = ios_read_zip(zip_file_path, extract_folder, start_date, end_date, research_name, participant_id) # zip 압축해제 및 파일 읽기
-# json_output = convert_ios_df_to_json(ios_df, variables, output_file=r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.json") # JSON 변환 및 파일 저장
+zip_file_path = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.zip"  # 압축 파일 경로 (실제 경로로 변경)
+extract_folder = r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\export_ios_data"  # 압축 해제할 폴더명
+start_date = "2024-12-30"
+end_date = "2025-01-01"
+research_name="My_Research",
+participant_id="P12345"
+variables=["StepCount", "GPS"]
+ios_df = ios_read_zip(zip_file_path, extract_folder, start_date, end_date, research_name, participant_id) # zip 압축해제 및 파일 읽기
+json_output = convert_ios_df_to_json(ios_df, variables, output_file=r"C:\Users\rlagy\Desktop\2025\phenotype_웹앱\ios_data.json") # JSON 변환 및 파일 저장
