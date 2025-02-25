@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>피험자 관리</title>
+        <link href="../static/participantManage.css" rel="stylesheet" type="text/css">
+        <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+    </head>
+    <body>
+        <!--헤더-->
+        <div class="header">
+            <div class="head-inner">
+                <!--로고-->
+                <div class="icon">
+                    <img src="../static/logo.png"  width="50" height="50">
+                    <a href="#"><h1>HAILAB</h1></a>
+                </div>
+                <!--유저 버튼-->
+                <div class="userInfo">
+                    <div class="signButton">
+                        <button>Login</button>
+                        <button>Register</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!--사이드 메뉴-->
+            <nav class="menubar">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">피험자 조회 및 관리</a></li>
+                    <li><a href="#">연구 프로파일 관리</a></li>
+                    <li><a href="#">마이페이지</a></li>
+                </ul>
+            </nav>
+            <main class="contents">
+                <div class="content-inner">
+                    <!---피험자 조회 및 관리-->
+                    <h2 id="title_map_detail" class="content_title">피험자 조회 및 관리</h2>
+                    <div>
+                        <table class="list" style="border: 1px solid lightgrey;">
+                            <colgroup>
+                                <col width="10%">
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="20%">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>연구명</th>
+                                    <td>
+                                        <select id="researchSelectBox">
+                                            <option value>연구 선택</option>
+                                            <option value>연구명1</option>
+                                        </select>
+                                    </td>
+                                    <th>이름</th>
+                                    <td><input type="text" id="parName"></td>
+                                </tr>
+                                <tr>
+                                    <th>생년월일</th>
+                                    <td><input type="date" id="parDob"></td>
+                                    <th>전화번호(4자리)</th>
+                                    <td><input type="text" id="parPhoneNumber"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="float: right; margin: 15px 15px 15px 15px">
+                            <button type="button" id="searchBtn" onclick="homeManager.createUserTable()">검색</button>
+                            <button type="button" id="initBtn" onclick="homeManager.doSearchInit()">초기화</button>
+                        </div>
+                    </div>
+                    <!--피험자 목록-->
+                    <section class="dataTable">
+                        <table id="dataTable" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th>피험자ID</th>
+                                    <th>연구명</th>
+                                    <th>이름</th>
+                                    <th>휴대폰번호</th>
+                                    <th>수집시작일</th>
+                                    <th>마지막수집일</th>
+                                    <th>운영체제</th>
+                                    <th>나이(만)</th>
+                                    <th>성별</th>
+                                    <th>생년월일</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍*동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </section>
+                    <!--피험자 추가-->
+                    <div style="float: right;">
+                        <button type="button" id="parRegisterButton" onclick="location.href='#'">피험자 추가</button>
+                    </div>
+                    <!--테이블 내비게이션 버튼-->
+                    <div class="pagination">
+                        <button id="prevPage">이전</button>
+                        <span id="pageInfo"></span>
+                        <button id="nextPage">다음</button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <script src="../static/participantManage.js" defer></script> 
+        <!--푸터-->
+        <footer>
+            <p>
+                <span>&copy; UNIST Healthcare Analytics and Interface Lab</span><br/>
+                <span>Main Administration Bldg(201)-Healthcare Center(B105)
+                    50, UNIST-gil, Eonyang-eup, Ulju-gun, Ulsan, Republic of Korea
+                    (44919)</span>
+            </p>
+        </footer>
+    </body>
+</html>
