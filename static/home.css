@@ -1,31 +1,168 @@
+/* 기본 스타일 */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f8f9fa;
 }
-header, footer {
-    background-color: #3574c7;
+
+/* 컨테이너 (그리드 레이아웃) */
+.container {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    grid-template-rows: 60px auto 50px;
+    grid-template-areas:
+        "header header"
+        "sidebar main"
+        "footer footer";
+    height: 100vh;
+}
+
+/* 헤더 스타일 */
+.header {
+    grid-area: header;
+    background-color: #456998;
     color: white;
-    text-align: center;
     padding: 1rem;
+    text-align: center;
+    font-size: 18px;
 }
-nav {
-    background-color: #333;
-    padding: 0.5rem;
-}
-nav a {
-    color: white;
-    margin: 0 15px;
-    text-decoration: none;
-}
-nav a:hover {
-    text-decoration: underline;
-}
-main {
-    padding: 20px;
-}
+
+/* 푸터 스타일 */
 footer {
+    grid-area: footer;
+    background-color: #456998;
+    color: white;
+    padding: 15px;
+    text-align: center;
+    font-size: 14px;
     position: fixed;
     width: 100%;
     bottom: 0;
+}
+
+/* 사이드바 스타일 */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background-color: #343a40;
+    color: white;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    overflow-y: auto;
+}
+
+/* 전체 메뉴 스타일 */
+.categories {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* 개별 메뉴 스타일 */
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    background-color: #495057;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s;
+}
+
+.title a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px;
+}
+
+.title:hover {
+    background-color: #868e96;
+}
+
+/* 메인 콘텐츠 스타일 */
+.content {
+    grid-area: main;
+    padding: 20px;
+    margin-left: 250px; /* 사이드바 공간 확보 */
+}
+
+/* 피험자 추가 & 검색을 가로 정렬 */
+.participant-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin: 10px 0;
+}
+
+/* 개별 박스 스타일 */
+#create_participant, #search_participant {
+    flex: 1;
+    background-color: white;
+    padding: 20px;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 피험자 목록 */
+#participant_list {
+    background-color: #d8d8d7;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* 테이블 스타일 */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+.user-table th, .user-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+
+.user-table th {
+    background-color: #456998;
+    color: white;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+    background-color: #e0701b;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background-color: #e0701b;
+}
+
+/* 반응형 디자인 */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .content {
+        margin-left: 200px;
+    }
+
+    .participant-actions {
+        flex-direction: column;
+    }
 }

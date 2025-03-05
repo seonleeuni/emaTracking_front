@@ -4,16 +4,16 @@
 }
 body {
     background-color: #ede7f694;
+    height: 100vh;
 }
 a {
     color: black; text-decoration: none;
+    cursor: pointer;
 }
-.container {
-    width: 80%;
-    margin: 0 auto;
-}
+/*헤더*/
 .header {
-    position: relative;
+    position: sticky;
+    top: 0;
     height: 70px;
     box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -25,7 +25,7 @@ a {
     align-items: center;
     padding: 0 50px;
 }
-
+/*헤더 아이콘과 버튼*/
 .icon {
     margin: 13px;
     width: 100px;
@@ -34,17 +34,39 @@ a {
 .icon img{
     margin-right: 10px;
 }
-
+.logout {
+    width: 60px;
+    height: 30px;
+    margin: 15px;
+    padding: 5px 10px;
+    color: #5a5858;
+    background-color: #CDC1FF;
+    font-weight: bold;
+    text-indent: 10px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid var(--gray);
+    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+}
+/*전체 내용*/
+#wrap {
+    width: 100%;
+    min-height: 603px;
+    clear: both;
+    display: flex;
+    position: relative;
+}
+/*메뉴바*/
 .menubar{
-    width: 220px;
+    width: 180px;
     height: 100vh;
-    padding: 10px;
+    padding: 15px;
     position: fixed;
     left: 0;
     overflow-y: auto;
     background-color: #E5D9F2;
-    font-size: 20px;
-    font-weight: 700;
+    font-size: 17px;
+    font-weight: 600;
     box-shadow:  10px 0 5px -5px rgba(0, 0, 0, 0.2);
 }
 .menubar ul {
@@ -58,23 +80,15 @@ a {
     margin: 10px;
     padding: 10px;
 }
-.signButton > button {
-    margin: 15px;
-    width: 60px;
-    height: 30px;
-    border: 0;
-    border-radius: 5px;
-    background-color: #CDC1FF;
-    box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-}
-.signButton > button:hover {
-    background-color: #E5D9F2;
+/*본 테이블들*/
+div{
+    display: block;
+    unicode-bidi: isolate;
 }
 .contents{
-    width: calc(100% - 200px);
+    width: 100%;
     margin-left: 200px;
-    padding: 10px 30px;
+    padding: 10px 50px;
 }
 .content-inner{
     margin-top: 20px;
@@ -102,7 +116,7 @@ h2 {
 .list {
     padding: 20px;
     margin-top: 10px;
-    width: 98%;
+    width: 100%;
     text-align: center;
     border-collapse: collapse;
     /* margin: 15px; */
@@ -116,7 +130,6 @@ table{
     table-layout: auto;
     overflow-y: auto;
 }
-
 .tbl-content{
     height:300px;
     overflow-x:auto;
@@ -144,6 +157,10 @@ tr {
     text-align: left;
     font-size: 15px;
     white-space: nowrap;
+}
+.dataTable tbody tr:hover td{
+    text-decoration: underline;
+    cursor: pointer;
 }
 .dataTable td{
     padding: 15px;
@@ -188,29 +205,33 @@ input, select {
     text-align: center;
 }
 
+/*색깔없는 버튼*/
 .content-inner button {
-    padding: 8px 12px;
-    margin: 5px;
+    padding: 6px 8px;
+    margin: 3px;
     border: 1px solid #43177247;
     background-color: #f8f9fa;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: 3px;
 }
-
 .content-inner button:hover {
     background-color: #e0e0e0;
 }
-
-.content-inner #parRegisterButton, #searchBtn, #initBtn{
+/*색깔있는 버튼*/
+.content-inner #parRegisterButton, #searchBtn, #initBtn, #editSelectedBtn{
     background-color: #756AB6;
     color: white;
     font-weight: 600;
     box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    padding: 8px 10px;
 }
+
+/*푸터*/
 footer {
-    position: absolute;
-    bottom: 0;
-    margin-left: 300px;
-    color: #808080;
+    position: fixed;
+    bottom: 0px;
+    left: 220px;
+    color: #808080aa;
     font-size: 10px;
 }
