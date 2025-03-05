@@ -1,30 +1,352 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>간단한 웹페이지 레이아웃</title>
-    <link href="../static/home.css" rel="stylesheet" type="text/css">
-</head>
-<body>
-    <header>
-        <h1>나의 간단한 웹페이지</h1>
-    </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>연구 프로파일 관리</title>
+        <link href="../static/participantManage.css" rel="stylesheet" type="text/css">
+        <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <script src="../static/participantManage.js" defer></script> 
+        <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    </head>
+    <body id="pManage">
+        <!--헤더-->
+        <div class="header">
+            <div class="head-inner">
+                <!--로고-->
+                <div class="icon">
+                    <img src="../static/logo.png"  width="50" height="50">
+                    <a href="#"><h1>HAILAB</h1></a>
+                </div>
+                <!--유저 버튼-->
+                <div class="userInfo">
+                    <span class="user_name">
+                        <i class="fa-solid fa-user"></i>
+                        김효림(대학원생)
+                    </span>
+                    <a class="logout" onclick="logout()" href="#">로그아웃</a>
+                </div>
+            </div>
+        </div>
 
-    <nav>
-        <a href="#">홈</a>
-        <a href="#">소개</a>
-        <a href="#">서비스</a>
-        <a href="#">연락처</a>
-    </nav>
+        <div id="wrap">
+            <!--사이드 메뉴-->
+            <nav class="menubar">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="../templates/participantManage.html">피험자 조회 및 관리</a></li>
+                    <li><a href="../templates/researchProfile.html">연구 프로파일 관리</a></li>
+                    <li><a href="#">마이페이지</a></li>
+                </ul>
+            </nav>
+            <main class="contents">
+                <div class="content-inner">
+                    <!---피험자 조회 및 관리-->
+                    <h2 id="title_map_detail" class="content_title">| 연구 프로파일 관리</h2>
+                    <div>
+                        <table class="list" style="border: 1px solid lightgrey;">
+                            <colgroup>
+                                <col width="10%">
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="20%">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>연구명</th>
+                                    <td>
+                                        <select id="researchSelectBox">
+                                            <option value>연구 선택</option>
+                                            <option value>연구명1</option>
+                                            <option value>연구명2</option>
+                                        </select>
+                                    </td>
+                                    <th>이름</th>
+                                    <td><input type="text" id="parName"></td>
+                                </tr>
+                                <tr>
+                                    <th>생년월일</th>
+                                    <td><input type="date" id="parDob"></td>
+                                    <th>전화번호(뒷번호 4자리)</th>
+                                    <td><input type="text" id="parPhoneNumber"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="float: right; margin: 5px">
+                            <button type="button" id="searchBtn" onclick="homeManager.createUserTable()">검색</button>
+                            <button type="button" id="initBtn" onclick="homeManager.doSearchInit()">초기화</button>
+                        </div>
+                    </div>
+                    <!--피험자 목록-->
+                    <div class="dataTable" style="clear: both;">
+                        <div style="margin-bottom: 5px;">
+                            <button type="button" id="selectAllBtn" onclick="selectAllRows()">모두 선택</button>
+                            <button type="button" id="DeleteSelectedBtn" onclick="deleteSelectedRows()">선택 삭제</button>
+                            <button type="button" id="sortByNameBtn" onclick="sortTableByName()">▲ 이름 순 정렬</button>
+                            <button type="button" id="exportBtn" style="align-items:center;">
+                                <img src="../static/excel_icon.png" alt="Excel" style="width:20px; vertical-align:middle;">
+                                다운로드
+                            </button>
+                        </div>
+                        <table id="dataTable" cellpadding="0" cellspacing="0" border="0">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>피험자ID</th>
+                                    <th>연구명</th>
+                                    <th>이름</th>
+                                    <th>휴대폰번호</th>
+                                    <th>수집시작일</th>
+                                    <th>마지막수집일</th>
+                                    <th>운영체제</th>
+                                    <th>나이(만)</th>
+                                    <th>성별</th>
+                                    <th>생년월일</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>김길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>이길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>최길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>박길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>정길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>오길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>도길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>김길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>홍길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>허길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>양길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>고길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>한길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="rowCheckbox"></td>
+                                    <td>123</td>
+                                    <td>연구명1</td>
+                                    <td>조길동</td>
+                                    <td>010-****-1234</td>
+                                    <td>2024-11-18</td>
+                                    <td>2024-12-20</td>
+                                    <td>iOS</td>
+                                    <td>23</td>
+                                    <td>남</td>
+                                    <td>001220</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!--피험자 추가-->
+                    <div style="float: right; margin-top: 5px;">
+                        <button type="button" id="editSelectedBtn">수정</button>
+                        <button type="button" id="parRegisterButton" onclick="">피험자 추가</button>
+                    </div>
+                    <!--테이블 내비게이션 버튼-->
+                    <div class="pagination">
+                        <button id="prevPage">이전</button>
+                        <span id="pageInfo"></span>
+                        <button id="nextPage">다음</button>
+                    </div>
 
-    <main>
-        <h2>환영합니다!</h2>
-        <p>이곳은 간단한 HTML 레이아웃의 예제입니다.</p>
-    </main>
+                    <!-- 피험자 정보 수정 팝업 -->
+                    <div id="editPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#fff; padding:20px; border:1px solid #ccc; z-index:1000;">
+                        <h3>피험자 정보 수정</h3>
+                        <div>
+                            피험자ID: <span id="editParticipantId"></span><br><br>
+                            연구명: <input type="text" id="editStudyName"><br><br>
+                            이름: <input type="text" id="editName"><br><br>
+                            휴대폰번호: <input type="text" id="editPhone"><br><br>
+                            수집시작일: <input type="date" id="editStartDate"><br><br>
+                            마지막수집일: <input type="date" id="editEndDate"><br><br>
+                            운영체제: <input type="text" id="editOS"><br><br>
+                            나이(만): <input type="number" id="editAge"><br><br>
+                            성별: <input type="text" id="editGender"><br><br>
+                            생년월일: <input type="text" id="editDOB"><br><br>
 
-    <footer>
-        &copy; 2025 나의 웹사이트. 모든 권리 보유.
-    </footer>
-</body>
+                            <button onclick="saveParticipantInfo()" style="background-color: #756AB6; color: white;">확인</button>
+                            <button onclick="closeEditPopup()">취소</button>
+                        </div>
+                    </div>
+                    <!-- 팝업 배경 -->
+                    <div id="popupOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:black; opacity:0.5; z-index:999;"></div>
+                </div>
+            </main>
+            
+        </div>
+        <!--푸터-->
+        <footer>
+            <p>
+                <span>&copy; UNIST Healthcare Analytics and Interface Lab / Seonmi Lee & Hyorim Kim</span><br/>
+            </p>
+        </footer>
+    </body>
 </html>

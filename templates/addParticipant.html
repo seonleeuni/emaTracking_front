@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>피험자 관리</title>
+        <link href="../static/participantManage.css" rel="stylesheet" type="text/css">
+        <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+    </head>
+    <body id="pManage">
+        <!--헤더-->
+        <div class="header">
+            <div class="head-inner">
+                <!--로고-->
+                <div class="icon">
+                    <img src="../static/logo.png"  width="50" height="50">
+                    <a href="#"><h1>HAILAB</h1></a>
+                </div>
+                <!--유저 버튼-->
+                <div class="userInfo">
+                    <span class="user_name">
+                        <i class="fa-solid fa-user"></i>
+                        김효림(대학원생)
+                    </span>
+                    <a class="logout" onclick="logout()" href="#">로그아웃</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="wrap">
+            <!--사이드 메뉴-->
+            <nav class="menubar">
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="../templates/participantManage.html">피험자 조회 및 관리</a></li>
+                    <li><a href="../templates/researchProfile.html">연구 프로파일 관리</a></li>
+                    <li><a href="#">마이페이지</a></li>
+                </ul>
+            </nav>
+            <main class="contents">
+                <div class="content-inner">
+                    <!---피험자 추가-->
+                    <h2 id="title_map_detail" class="content_title">| 피험자 추가</h2>
+                    <div><!-- 피험자 파일 업로드 -->
+                        <h4 for="fileUpload">CSV / XLSX 파일 업로드</h4>
+                        <input type="file" id="fileUpload" accept=".csv, .xlsx">
+                    </div>
+                    <div>
+                        <table class="list" style="border: 1px solid lightgrey;">
+                            <colgroup>
+                                <col width="10%">
+                                <col width="20%">
+                                <col width="10%">
+                                <col width="20%">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>연구명</th>
+                                    <td>
+                                        <select id="researchSelectBox">
+                                            <option value>연구 선택</option>
+                                            <option value>연구명1</option>
+                                            <option value>연구명2</option>
+                                        </select>
+                                    </td>
+                                    <th>이름</th>
+                                    <td><input type="text" id="parName"></td>
+                                </tr>
+                                <tr>
+                                    <th>수집 시작일</th>
+                                    <td><input type="date" id="startDate"></td>
+                                    <th>마지막수집일</th>
+                                    <td><input type="date" id="endDate"></td>
+                                </tr>
+                                <tr>
+                                    <th>생년월일</th>
+                                    <td><input type="date" id="parDob"></td>
+                                    <th>전화번호(뒷번호 4자리)</th>
+                                    <td><input type="text" id="parPhoneNumber"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                    
+                    <!--피험자 추가-->
+                    <div style="float: right; margin-top: 5px;">
+                        <button type="button" id="parRegisterButton" onclick="">추가</button>
+                    </div>
+
+                </div>
+            </main>
+            
+        </div>
+        <!--푸터-->
+        <footer>
+            <p>
+                <span>&copy; UNIST Healthcare Analytics and Interface Lab / Seonmi Lee & Hyorim Kim</span><br/>
+            </p>
+        </footer>
+
+        <script>
+            // 엑셀 파일 업로드 처리
+            document.getElementById("fileUpload").addEventListener("change", function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const data = new Uint8Array(event.target.result);
+                const workbook = XLSX.read(data, { type: "array" });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(sheet);
+
+                if (jsonData.length > 0) {
+                    const firstRow = jsonData[0]; // 첫 번째 행 데이터 자동 입력
+                    document.getElementById("researchSelectBox").value = firstRow["연구명"] || "";
+                    document.getElementById("parName").value = firstRow["이름"] || "";
+                    document.getElementById("startDate").value = firstRow["수집시작일"] || "";
+                    document.getElementById("endDate").value = firstRow["마지막수집일"] || "";
+                    document.getElementById("parDob").value = firstRow["생년월일"] || "";
+                    document.getElementById("parPhoneNumber").value = firstRow["전화번호"] || "";
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+        // 수동 입력 피험자 추가 버튼 동작
+        document.getElementById("parRegisterButton").addEventListener("click", function() {
+            const researchName = document.getElementById("researchSelectBox").value;
+            const participantName = document.getElementById("parName").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+            const dob = document.getElementById("parDob").value;
+            const phoneNumber = document.getElementById("parPhoneNumber").value;
+
+            if (!researchName || researchName === "연구 선택" || !participantName || !dob || !phoneNumber) {
+                alert("연구명, 이름, 생년월일, 전화번호는 필수 입력 항목입니다!");
+                return;
+            }
+
+            const newParticipant = {
+                연구명: researchName,
+                이름: participantName,
+                수집시작일: startDate,
+                마지막수집일: endDate,
+                생년월일: dob,
+                전화번호: phoneNumber
+            };
+
+            let participants = JSON.parse(localStorage.getItem("participants")) || [];
+            participants.push(newParticipant);
+            localStorage.setItem("participants", JSON.stringify(participants));
+
+            alert("피험자가 추가되었습니다!");
+            window.location.href = "participantManage.html"; // 피험자 관리 페이지로 이동
+        });
+        </script>
+    </body>
+</html>
